@@ -13,6 +13,8 @@
 		725F29E01F38D33600B830F2 /* MessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 725F29DF1F38D33600B830F2 /* MessagesViewController.swift */; };
 		725F29E31F38D33600B830F2 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 725F29E11F38D33600B830F2 /* MainInterface.storyboard */; };
 		725F29E51F38D33600B830F2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 725F29E41F38D33600B830F2 /* Assets.xcassets */; };
+		725F29F11F38FB4300B830F2 /* CompactViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 725F29F01F38FB4300B830F2 /* CompactViewController.swift */; };
+		725F29F31F38FB7C00B830F2 /* ExpandedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 725F29F21F38FB7C00B830F2 /* ExpandedViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +51,8 @@
 		725F29E21F38D33600B830F2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		725F29E41F38D33600B830F2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		725F29E61F38D33600B830F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		725F29F01F38FB4300B830F2 /* CompactViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompactViewController.swift; sourceTree = "<group>"; };
+		725F29F21F38FB7C00B830F2 /* ExpandedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpandedViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,7 +106,9 @@
 		725F29DE1F38D33600B830F2 /* MessagesExtension */ = {
 			isa = PBXGroup;
 			children = (
+				725F29F01F38FB4300B830F2 /* CompactViewController.swift */,
 				725F29DF1F38D33600B830F2 /* MessagesViewController.swift */,
+				725F29F21F38FB7C00B830F2 /* ExpandedViewController.swift */,
 				725F29E11F38D33600B830F2 /* MainInterface.storyboard */,
 				725F29E41F38D33600B830F2 /* Assets.xcassets */,
 				725F29E61F38D33600B830F2 /* Info.plist */,
@@ -213,6 +219,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				725F29F31F38FB7C00B830F2 /* ExpandedViewController.swift in Sources */,
+				725F29F11F38FB4300B830F2 /* CompactViewController.swift in Sources */,
 				725F29E01F38D33600B830F2 /* MessagesViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

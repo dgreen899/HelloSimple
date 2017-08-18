@@ -8,8 +8,17 @@
 
 import UIKit
 import Messages
+// we create protocols in the other controllers ..expanded and compact
+// we define the actions in those
+//we then make the main msg vc conform ot the protocols and and access those methods and properties
+//thru delegation
 
-class MessagesViewController: MSMessagesAppViewController {
+
+class MessagesViewController: MSMessagesAppViewController, CompactDelegate, ExpandedDelegate {
+    
+    let compactID = "compact"
+    let expandedID = "expanded"
+    var shouldClear:Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,6 +37,9 @@ class MessagesViewController: MSMessagesAppViewController {
         // This will happen when the extension is about to present UI.
         
         // Use this method to configure the extension and restore previously stored state.
+    }
+    override func didBecomeActive(with conversation: MSConversation) {
+        presentVC(presentationStyle: self.presentationStyle)
     }
     
     override func didResignActive(with conversation: MSConversation) {
@@ -63,10 +75,119 @@ class MessagesViewController: MSMessagesAppViewController {
         // Use this method to prepare for the change in presentation style.
     }
     
+    // using storyboard--then setting up a function that takes all VC and makes them child vc
+    //then select the appropirate one
+    func presentVC(presentationStyle:MSMessagesAppPresentationStyle) {
+        let identifier = (presentationStyle == .compact) ? compactID : expandedID
+        let controller = storyboard!.instantiateViewController(withIdentifier: identifier)
+        
+        
+        
+        
+        for child in childViewControllers {
+            child.willMove(toParentViewController: nil)
+            child.view.removeFromSuperview()
+            child.removeFromParentViewController()
+        }
+        
+        addChildViewController(controller)
+        controller.view.frame = view.bounds
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(controller.view)
+        
+        //constraints
+        controller.view.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        controller.view.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        controller.view.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        controller.view.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        
+        controller.didMove(toParentViewController: self)
+        
+        //check here to see if controller is expanded or compact
+        if let compact = controller as? CompactViewController {
+            compact.delegate = self
+            
+            
+        } else if let expanded =  controller as? ExpandedViewController {
+            expanded.delegate = self
+            
+            if shouldClear {
+                expanded.clearText()
+                shouldClear = false
+            }
+            //check fi thers a url
+           else if let url = self.activeConversation?.selectedMessage?.url {
+                expanded.didOpen(from: url)
+            }
+            
+        }
+
+        
+    }
+    
     override func didTransition(to presentationStyle: MSMessagesAppPresentationStyle) {
         // Called after the extension transitions to a new presentation style.
-    
+        
         // Use this method to finalize any behaviors associated with the change in presentation style.
+        presentVC(presentationStyle: presentationStyle)
     }
 
+    func newNote() {
+        shouldClear = true
+        self.requestPresentationStyle(.expanded)
+        print("new note")
+    }
+
+    func sendMessage(title: String, note: String) {
+        //2 questionsmars says if this fails..do the thing on the other side to the 2qusetion marks
+        let session = self.activeConversation?.selectedMessage?.session ?? MSSession()
+        let message = MSMessage(session: session)
+        
+        let DGlayout = MSMessageTemplateLayout()
+        DGlayout.caption = note
+        DGlayout.subcaption  = title
+        
+        //other stuff
+        //layout.caption = @"Caption";
+        //layout.subcaption = @"Subcaption";
+        DGlayout.trailingCaption = "Trailing Caption";
+        //DGlayout.trailingSubcaption = "Trailing Subcaption";
+        DGlayout.imageTitle = "Image Title";
+        DGlayout.imageSubtitle = "Image Subtitle";
+        
+        
+        // define user id..etc
+        let user:String = self.activeConversation?.localParticipantIdentifier.uuidString ?? "Unknown"
+        //the $ user will show the name within app
+        DGlayout.trailingSubcaption = "Edited by $\(user)"
+        
+        
+        message.layout = DGlayout
+        message.url = getMessageURL(title: title, note: note)
+        self.activeConversation?.insert(message
+            , completionHandler: { (e:Error?) in
+                print("complete")
+        })
+        //dismiss appl
+        self.dismiss()
+    }
+    
+    func saveMessage(title: String, note: String) {
+        let url = getMessageURL(title: title, note: note)
+        self.extensionContext?.open(url, completionHandler: { (success:Bool) in
+            print("open url")
+        })
+    }
+    
+    //sending a mess requres url
+    func getMessageURL(title:String, note:String) -> URL {
+        var components = URLComponents()
+        let qTitle = URLQueryItem(name: "title", value: title)
+        let qNote = URLQueryItem(name: "note", value: note)
+        components.queryItems = [qTitle, qNote]
+        components.scheme = "simplenotes"
+        components.host = "openApp"
+        
+        return components.url!
+    }
 }
